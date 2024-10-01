@@ -1,18 +1,28 @@
 package web.servise;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import web.dao.CarDao;
-import web.modul.Car;
+import web.model.Car;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Service
 public class CarService {
-    private static CarDao carDao;
+    private final CarDao carDao;
 
-    public static List<Car> getAllCar() {
-        return CarDao.getAllCar();
+    @Autowired
+    public CarService(CarDao carDao) {
+        this.carDao = carDao;
     }
 
-    public static List<Car> getCarByCount(List<Car> cars, long count) {
-        return CarDao.getCarByCount(cars, count);
+    public List<Car> printCarsByCount(long count) {
+        List<Car> allCars = carDao.getAllCar();
+        if (count >= allCars.size() || count <= 0) {
+            return allCars;
+        }
+        return allCars.stream().limit(count).collect(Collectors.toList());
     }
 }
+
